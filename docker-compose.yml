@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    platform: linux/amd64
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/sql:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: matome
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass password
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6 # for olivere/elastic
+    ports:
+      - "9200:9200"
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=password
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    entrypoint: >
+      bash -c "elasticsearch-plugin install analysis-kuromoji && 
+               docker-entrypoint.sh"
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+  webdav:
+    image: twizzel/webdav
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      AUTH_TYPE: Digest
+      USERNAME: webdav
+      PASSWORD: password
+    volumes:
+      - ./webdav/data:/var/lib/dav
+  # docker exec -it $(docker ps | grep mysql | awk '{print $1}') mysql -u root -ppassword -D matome
+  # docker-compose exec db bash -c "./docker-entrypoint-initdb.d/init-database.sh"
+  # mysql -h 127.0.0.1 -P 3306 -u root -ppassword -D matome
+  # INSERT INTO sites (id, title, rss_url) VALUES ('9a9cdc02-7d6c-e7a5-271d-897be92e9eb7', '痛いニュース', 'http://blog.livedoor.jp/dqnplus/index.rdf');
+  # UPDATE sites SET last_updated_at = '2020-08-26 18:48:56.451738' WHERE id ='9a9cdc02-7d6c-e7a5-271d-897be92e9eb7';
+  # curl -sS -XGET 'localhost:9200/article/_search?pretty'
+  # curl -XPOST -F upfile=@webdav/sample/WebDAVTest.png http://localhost/static

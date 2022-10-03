@@ -1,0 +1,4 @@
+mysql/data/
+redis/data/
+elasticsearch/data/
+webdav/data/
