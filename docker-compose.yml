@@ -1,6 +1,25 @@
 version: "3.7"
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    environment:
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: matome
+      KVS_PASSWORD: password
+      KVS_HOST: 127.0.0.1
+      KVS_DATABASE: 0
+      SE_USER: elastic
+      SE_PASSWORD: password
+      SE_HOST: 127.0.0.1
+      WD_USER: webdav
+      WD_PASSWORD: password
+      WD_HOST: 127.0.0.1
+      AP_ROOT: http://localhost
   mysql:
     image: mysql:5.7
     ports:
