@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS matome.articles (
     created_at   TIMESTAMP(6)  DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     PRIMARY KEY (id)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE INDEX idx_site_id_published_at ON matome.articles (site_id, published_at);
+CREATE INDEX idx_published_at ON matome.articles (published_at);
 
 CREATE TABLE IF NOT EXISTS matome.sites (
     id              VARCHAR(36)  NOT NULL,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS matome.users (
     created_at  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     PRIMARY KEY (id)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE INDEX idx_device_hash ON matome.users (device_hash);
 
 CREATE TABLE IF NOT EXISTS matome.comments (
     id          VARCHAR(36)  NOT NULL,
@@ -42,3 +45,4 @@ CREATE TABLE IF NOT EXISTS matome.comments (
     created_at  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     PRIMARY KEY (id)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE INDEX idx_article_id ON matome.comments (article_id);
