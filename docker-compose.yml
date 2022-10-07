@@ -2,9 +2,10 @@ version: "3.7"
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: app/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: app/Dockerfile
+    image: gcr.io/gke-test-287910/news-app:v0.0.1 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
     ports:
       - "80:80"
     environment:
@@ -51,7 +52,7 @@ services:
     volumes:
       - ./redis/data:/data
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6 # for olivere/elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6 # appでolivere/elasticパッケージを使うため
     ports:
       - "9200:9200"
     environment:
@@ -87,3 +88,4 @@ services:
   # UPDATE sites SET last_updated_at = '2020-08-26 18:48:56.451738' WHERE id ='9a9cdc02-7d6c-e7a5-271d-897be92e9eb7';
   # curl -sS -XGET 'localhost:9200/article/_search?pretty'
   # curl -XPOST -F upfile=@webdav/sample/WebDAVTest.png http://localhost/static
+  # ubuntuへのdockerのinstall: https://zenn.dev/shimakaze_soft/articles/02aebaedeb43b6
