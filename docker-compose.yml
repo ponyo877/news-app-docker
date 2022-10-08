@@ -5,7 +5,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: app/Dockerfile
-    image: gcr.io/gke-test-287910/news-app:v0.0.2 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
+    image: gcr.io/gke-test-287910/news-app:v0.0.4 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
     ports:
       - "80:80"
     environment:
@@ -18,10 +18,10 @@ services:
       KVS_HOST: redis
       KVS_DATABASE: 0
       KVS_PORT: 6379
-      SE_USER: elastic
-      SE_PASSWORD: password
-      SE_HOST: elasticsearch
-      SE_PORT: 9200
+      # SE_USER: elastic
+      # SE_PASSWORD: password
+      # SE_HOST: elasticsearch
+      # SE_PORT: 9200
       WD_USER: webdav
       WD_PASSWORD: password
       WD_HOST: webdav
@@ -30,7 +30,7 @@ services:
     depends_on:
       - mysql
       - redis
-      - elasticsearch
+      # - elasticsearch
       - webdav
   mysql:
     image: mysql:5.7
@@ -51,25 +51,25 @@ services:
       - "6379:6379"
     volumes:
       - ./redis/data:/data
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6 # appでolivere/elasticパッケージを使うため
-    ports:
-      - "9200:9200"
-    environment:
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
-      - ELASTIC_PASSWORD=password
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    entrypoint: >
-      bash -c "elasticsearch-plugin list | grep analysis-kuromoji &&
-               [[ $$? -ne 0 ]] && elasticsearch-plugin install analysis-kuromoji || true &&
-               docker-entrypoint.sh"
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
+  # elasticsearch: # elasticsearchはメモリを使い過ぎるので一旦廃止
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6 # appでolivere/elasticパッケージを使うため
+  #   ports:
+  #     - "9200:9200"
+  #   environment:
+  #     - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+  #     - ELASTIC_PASSWORD=password
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   entrypoint: >
+  #     bash -c "elasticsearch-plugin list | grep analysis-kuromoji &&
+  #              [[ $$? -ne 0 ]] && elasticsearch-plugin install analysis-kuromoji || true &&
+  #              docker-entrypoint.sh"
+  #   volumes:
+  #     - ./elasticsearch/data:/usr/share/elasticsearch/data
   webdav:
     image: twizzel/webdav
     restart: always
@@ -84,9 +84,10 @@ services:
   # docker exec -it $(docker ps | grep mysql | awk '{print $1}') mysql -u root -ppassword -D matome
   # docker-compose exec db bash -c "./docker-entrypoint-initdb.d/init-database.sh"
   # mysql -h 127.0.0.1 -P 3306 -u root -ppassword -D matome
-  # INSERT INTO sites (id, title, rss_url) VALUES ('9a9cdc02-7d6c-e7a5-271d-897be92e9eb7', '痛いニュース', 'http://blog.livedoor.jp/dqnplus/index.rdf');
+  # INSERT INTO sites (id, title, rss_url, image_url) VALUES ('9a9cdc02-7d6c-e7a5-271d-897be92e9eb7', '痛いニュース', 'http://blog.livedoor.jp/dqnplus/index.rdf', 'sample.com');
   # UPDATE sites SET last_updated_at = '2020-08-26 18:48:56.451738' WHERE id ='9a9cdc02-7d6c-e7a5-271d-897be92e9eb7';
   # curl -sS -XGET 'localhost:9200/article/_search?pretty'
+  # curl localhost/v1/article/search?keyword=ブラジル | jq .
   # curl -XPOST -F upfile=@webdav/sample/WebDAVTest.png http://localhost/static
   # ubuntuへのdockerのinstall: https://zenn.dev/shimakaze_soft/articles/02aebaedeb43b6
   # docker images -q | xargs docker rmi

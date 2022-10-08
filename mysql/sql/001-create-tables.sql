@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS matome.articles (
     published_at TIMESTAMP(6)  DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     updated_at   TIMESTAMP(6)  DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     created_at   TIMESTAMP(6)  DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FULLTEXT KEY (title) WITH PARSER ngram
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE INDEX idx_site_id_published_at ON matome.articles (site_id, published_at);
 CREATE INDEX idx_published_at ON matome.articles (published_at);
