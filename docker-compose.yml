@@ -5,7 +5,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: app/Dockerfile
-    image: gcr.io/gke-test-287910/news-app:v0.0.4 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
+    image: gcr.io/gke-test-287910/news-app:v0.0.5 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
     ports:
       - "80:80"
     environment:
@@ -90,6 +90,10 @@ services:
   # curl localhost/v1/article/search?keyword=ブラジル | jq .
   # curl -XPOST -F upfile=@webdav/sample/WebDAVTest.png http://localhost/static
   # ubuntuへのdockerのinstall: https://zenn.dev/shimakaze_soft/articles/02aebaedeb43b6
+  # ubuntuでgcrのpull: https://cloud.google.com/sdk/gcloud/reference/auth/configure-docker
+  # ubuntuへのdstatのinstall: https://yatta47.hateblo.jp/entry/2018/01/13/030000
+  # dstat -clm
   # docker images -q | xargs docker rmi
   # docker ps -aq | xargs docker stop; docker ps -aq | xargs docker rm
-  # docker build -t gcr.io/gke-test-287910/news-app:v0.0.2 --platform amd64 .
+  # docker build -t gcr.io/gke-test-287910/news-app:v0.0.5 --platform amd64 --no-cache app
+  # sh bin/gatling.sh --run-mode local --simulation testScenario
