@@ -5,10 +5,12 @@ services:
     # build:
     #   context: .
     #   dockerfile: app/Dockerfile
-    image: gcr.io/gke-test-287910/news-app:v0.0.5 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
+    image: gcr.io/gke-test-287910/news-app:v0.0.7 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
     ports:
-      - "80:80"
+      - "8001:8000"
     environment:
+      AP_ROOT: http://localhost
+      AP_PORT: 8000
       DB_USER: root
       DB_PASSWORD: password
       DB_HOST: mysql
@@ -26,7 +28,6 @@ services:
       WD_PASSWORD: password
       WD_HOST: webdav
       WD_PORT: 80
-      AP_ROOT: http://localhost
     depends_on:
       - mysql
       - redis
@@ -70,6 +71,14 @@ services:
   #              docker-entrypoint.sh"
   #   volumes:
   #     - ./elasticsearch/data:/usr/share/elasticsearch/data
+  ngixn:
+    image: gcr.io/gke-test-287910/news-nginx:v0.0.1
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/privacy_policy.html:/var/www/static/privacy_policy/index.html
+      - ./nginx/eula.html:/var/www/static/eula/index.html
   webdav:
     image: twizzel/webdav
     restart: always
@@ -95,5 +104,7 @@ services:
   # dstat -clm
   # docker images -q | xargs docker rmi
   # docker ps -aq | xargs docker stop; docker ps -aq | xargs docker rm
-  # docker build -t gcr.io/gke-test-287910/news-app:v0.0.5 --platform amd64 --no-cache app
+  # docker build -t gcr.io/gke-test-287910/news-app:v0.0.6 --platform amd64 --no-cache app
+  # docker push gcr.io/gke-test-287910/news-app:v0.0.6
   # sh bin/gatling.sh --run-mode local --simulation testScenario
+  # ssh -i ~/.ssh/id_ed25519 keisuke877jp@35.197.79.235
