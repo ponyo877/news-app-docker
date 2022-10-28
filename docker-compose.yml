@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      AP_ROOT: http://nginx
+      AP_ROOT: https://matome-kun.ga
       AP_PORT: 8000
       DB_USER: root
       DB_PASSWORD: password
