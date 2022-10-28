@@ -26,7 +26,7 @@ services:
       # SE_PORT: 9200
       WD_USER: webdav
       WD_PASSWORD: password
-      WD_HOST: webdav
+      WD_HOST: nginx
       WD_PORT: 80
     depends_on:
       - mysql
