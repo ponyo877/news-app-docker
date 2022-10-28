@@ -5,7 +5,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: app/Dockerfile
-    image: gcr.io/gke-test-287910/news-app:v0.0.7 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
+    image: gcr.io/gke-test-287910/news-app:v0.0.8 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
     ports:
       - "8000:8000"
     environment:

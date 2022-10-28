@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS matome.users (
     id          VARCHAR(36)  NOT NULL,
     name        VARCHAR(100) NOT NULL,
     image_url   VARCHAR(100) NOT NULL,
-    device_hash VARCHAR(100) NOT NULL,
+    device_hash VARCHAR(100) NOT NULL UNIQUE,
     updated_at  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     created_at  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     PRIMARY KEY (id)
