@@ -24,15 +24,16 @@ services:
       # SE_PASSWORD: password
       # SE_HOST: elasticsearch
       # SE_PORT: 9200
-      WD_USER: webdav
-      WD_PASSWORD: password
+      # WD_USER: webdav
+      # WD_PASSWORD: password
       WD_HOST: nginx
       WD_PORT: 80
     depends_on:
       - mysql
       - redis
+      - nginx
       # - elasticsearch
-      - webdav
+      # - webdav
   mysql:
     image: mysql:5.7
     ports:
@@ -52,6 +53,17 @@ services:
       - "6379:6379"
     volumes:
       - ./redis/data:/data
+  nginx:
+    image: gcr.io/gke-test-287910/news-nginx:v0.0.1
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/privacy_policy.html:/var/www/static/privacy_policy/index.html
+      - ./nginx/eula.html:/var/www/static/eula/index.html
+    # depends_on:
+    #   - app
   # elasticsearch: # elasticsearchはメモリを使い過ぎるので一旦廃止
   #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6 # appでolivere/elasticパッケージを使うため
   #   ports:
@@ -71,42 +83,14 @@ services:
   #              docker-entrypoint.sh"
   #   volumes:
   #     - ./elasticsearch/data:/usr/share/elasticsearch/data
-  nginx:
-    image: gcr.io/gke-test-287910/news-nginx:v0.0.1
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/privacy_policy.html:/var/www/static/privacy_policy/index.html
-      - ./nginx/eula.html:/var/www/static/eula/index.html
-    depends_on:
-      - app
-  webdav:
-    image: twizzel/webdav
-    restart: always
-    ports:
-      - "8080:80"
-    environment:
-      AUTH_TYPE: Digest
-      USERNAME: webdav
-      PASSWORD: password
-    volumes:
-      - ./webdav/data:/var/lib/dav
-  # docker exec -it $(docker ps | grep mysql | awk '{print $1}') mysql -u root -ppassword -D matome
-  # docker-compose exec db bash -c "./docker-entrypoint-initdb.d/init-database.sh"
-  # mysql -h 127.0.0.1 -P 3306 -u root -ppassword -D matome
-  # INSERT INTO sites (id, title, rss_url, image_url) VALUES ('9a9cdc02-7d6c-e7a5-271d-897be92e9eb7', '痛いニュース', 'http://blog.livedoor.jp/dqnplus/index.rdf', 'sample.com');
-  # UPDATE sites SET last_updated_at = '2020-08-26 18:48:56.451738' WHERE id ='9a9cdc02-7d6c-e7a5-271d-897be92e9eb7';
-  # curl -sS -XGET 'localhost:9200/article/_search?pretty'
-  # curl localhost/v1/article/search?keyword=ブラジル | jq .
-  # curl -XPOST -F upfile=@webdav/sample/WebDAVTest.png http://localhost/static
-  # ubuntuへのdockerのinstall: https://zenn.dev/shimakaze_soft/articles/02aebaedeb43b6
-  # ubuntuでgcrのpull: https://cloud.google.com/sdk/gcloud/reference/auth/configure-docker
-  # ubuntuへのdstatのinstall: https://yatta47.hateblo.jp/entry/2018/01/13/030000
-  # dstat -clm
-  # docker images -q | xargs docker rmi
-  # docker ps -aq | xargs docker stop; docker ps -aq | xargs docker rm
-  # docker build -t gcr.io/gke-test-287910/news-app:v0.0.6 --platform amd64 --no-cache app
-  # docker push gcr.io/gke-test-287910/news-app:v0.0.6
-  # sh bin/gatling.sh --run-mode local --simulation testScenario
-  # ssh -i ~/.ssh/id_ed25519 keisuke877jp@35.197.79.235
+  # webdav:
+  #   image: twizzel/webdav
+  #   restart: always
+  #   ports:
+  #     - "8080:80"
+  #   environment:
+  #     AUTH_TYPE: Digest
+  #     USERNAME: webdav
+  #     PASSWORD: password
+  #   volumes:
+  #     - ./webdav/data:/var/lib/dav
