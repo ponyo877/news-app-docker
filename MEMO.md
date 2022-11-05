@@ -38,7 +38,9 @@ ubuntuへのredis-cliのinstall: https://codewithhugo.com/install-just-redis-cli
 curl -sS -XGET 'localhost:9200/article/_search?pretty'
 curl localhost/v1/article/search?keyword=ブラジル | jq .
 curl -XPOST -F file=@webdav/sample/WebDAVTest.png http://localhost/static
-for img in $(ls assets/images/icon); do curl -XPOST https://matome-kun.ga/v1/static -F file=@assets/images/icon/$img; done
+for img in $(ls assets/images/icon); do curl -XPOST https://matome-kun.ga/v1/static -F file=@assets/
+for img in $(ls); do curl -XPOST https://matome-kun.ga/v1/static -F file=@/Users/ponyo877/Documents/workspace/sandbox/ICONS/$img;  done
+images/icon/$img; done
 ```
 
 # Other

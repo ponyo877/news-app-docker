@@ -5,7 +5,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: app/Dockerfile
-    image: gcr.io/gke-test-287910/news-app:v0.0.13 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
+    image: gcr.io/gke-test-287910/news-app:v0.0.14 # image buildでメモリ不足になったため、事前にbuildしてレジストリに格納
     ports:
       - "8000:8000"
     environment:
@@ -62,6 +62,7 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/privacy_policy.html:/var/www/static/privacy_policy/index.html
       - ./nginx/eula.html:/var/www/static/eula/index.html
+      - ./nginx/data:/var/www/static/
     # depends_on:
     #   - app
   # elasticsearch: # elasticsearchはメモリを使い過ぎるので一旦廃止
