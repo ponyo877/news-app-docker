@@ -1,3 +1,4 @@
+app/data/
 mysql/data/
 redis/data/
 elasticsearch/data/
