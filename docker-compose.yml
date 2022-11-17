@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   app:
-    image: gcr.io/gke-test-287910/news-app:v0.0.17
+    image: gcr.io/gke-test-287910/news-app:v0.0.18
     ports:
       - "8000:8000"
     environment:
