@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   app:
-    image: gcr.io/gke-test-287910/news-app:v0.0.14
+    image: gcr.io/gke-test-287910/news-app:v0.0.15
     ports:
       - "8000:8000"
     environment:
@@ -19,6 +19,9 @@ services:
       KVS_PORT: 6379
       WD_HOST: nginx
       WD_PORT: 80
+      MLM_DIR: /srv/models
+      MLM_NAME: izumi-lab/bert-small-japanese
+      MLM_INDEX_PATH: /srv/matome.ann
     depends_on:
       - mysql
       - redis
