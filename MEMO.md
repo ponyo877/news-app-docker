@@ -34,7 +34,8 @@ ubuntuへのredis-cliのinstall: https://codewithhugo.com/install-just-redis-cli
 
 ## Command
 ```bash
-docker exec -it 4d98c66f080b redis-cli --no-auth-warning -a password flushall
+docker exec -it c0c5c675ff25 redis-cli --no-auth-warning -a password flushall
+redis-cli --no-auth-warning -a password keys ml:* | xrags -I{} redis-cli --no-auth-warning -a password del {}
 ```
 
 # HTTP
