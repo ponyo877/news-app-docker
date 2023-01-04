@@ -1,0 +1,59 @@
+version: "3.7"
+
+services:
+  app:
+    image: gcr.io/gke-test-287910/news-app:v0.0.20
+    ports:
+      - "8000:8000"
+    environment:
+      AP_ROOT: https://matome-kun.ga
+      AP_PORT: 8000
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_HOST: mysql
+      DB_DATABASE: matome
+      DB_PORT: 3306
+      KVS_PASSWORD: password
+      KVS_HOST: redis
+      KVS_DATABASE: 0
+      KVS_PORT: 6379
+      WD_HOST: nginx
+      WD_PORT: 80
+      MLM_DIR: /srv/models
+      MLM_NAME: izumi-lab/bert-small-japanese
+      MLM_INDEX_PATH: /srv/matome.ann
+    depends_on:
+      - mysql
+      - redis
+      - nginx
+    volumes:
+      - ./app/data:/srv
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    platform: linux/amd64
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/sql:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: matome
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass password
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+  nginx:
+    image: gcr.io/gke-test-287910/news-nginx:v0.0.1
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/privacy_policy.html:/var/www/static/privacy_policy/index.html
+      - ./nginx/eula.html:/var/www/static/eula/index.html
+      - ./nginx/data:/var/www/static/
