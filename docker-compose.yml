@@ -28,8 +28,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      nginx:
-        condition: service_started
     volumes:
       - ./app/data:/srv
   mysql:
@@ -60,7 +58,7 @@ services:
     volumes:
       - ./redis/data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-p", "6379", "ping"]
+      test: ["CMD", "redis-cli", "-p", "6379", "-a", "password", "ping"]
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -75,3 +73,6 @@ services:
       - ./nginx/privacy_policy.html:/var/www/static/privacy_policy/index.html
       - ./nginx/eula.html:/var/www/static/eula/index.html
       - ./nginx/data:/var/www/static/
+    depends_on:
+      app:
+        condition: service_started
