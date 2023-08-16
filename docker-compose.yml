@@ -4,7 +4,8 @@ services:
   app:
     image: gcr.io/gke-test-287910/news-app:v0.0.20
     ports:
-      - "8000:8000"
+      - 8000:8000
+    restart: always
     environment:
       AP_ROOT: https://matome-kun.ga
       AP_PORT: 8000
@@ -23,15 +24,19 @@ services:
       MLM_NAME: izumi-lab/bert-small-japanese
       MLM_INDEX_PATH: /srv/matome.ann
     depends_on:
-      - mysql
-      - redis
-      - nginx
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nginx:
+        condition: service_started
     volumes:
       - ./app/data:/srv
   mysql:
     image: mysql:5.7
     ports:
-      - "3306:3306"
+      - 3306:3306
+    restart: always
     platform: linux/amd64
     volumes:
       - ./mysql/data:/var/lib/mysql
@@ -40,13 +45,26 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: matome
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
   redis:
     image: redis:latest
     command: redis-server --requirepass password
     ports:
-      - "6379:6379"
+      - 6379:6379
+    restart: always
     volumes:
       - ./redis/data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6379", "ping"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
   nginx:
     image: gcr.io/gke-test-287910/news-nginx:v0.0.1
     ports:
