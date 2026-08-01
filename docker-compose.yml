@@ -5,7 +5,8 @@ services:
     # v0.0.21: /health追加・クローラ堅牢化・画像ドメイン修正(developからビルド)
     image: gcr.io/gke-test-287910/news-app:v0.0.21
     ports:
-      - 8000:8000
+      # 外部公開はnginx(:80)のみ。直結ポートはホスト内に限定する
+      - 127.0.0.1:8000:8000
     restart: always
     mem_limit: 512m
     mem_reservation: 256m
@@ -48,7 +49,7 @@ services:
   mysql:
     image: mysql:5.7
     ports:
-      - 3306:3306
+      - 127.0.0.1:3306:3306
     restart: always
     platform: linux/amd64
     mem_limit: 512m
@@ -94,7 +95,7 @@ services:
     image: redis:latest
     command: redis-server --requirepass password
     ports:
-      - 6379:6379
+      - 127.0.0.1:6379:6379
     restart: always
     mem_limit: 128m
     mem_reservation: 64m
@@ -111,24 +112,8 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
-  # RSSクロール(GET /v1/stock)の定期実行。従来はVMのcrontab(リポジトリ管理外)だったが、
-  # コンテナに移してリポジトリ管理+docker logsで実行履歴を追えるようにした。
-  # ⚠️ 有効化する際はVM側の旧crontabエントリを削除すること(二重実行防止)
-  cron:
-    image: alpine:latest
-    command: crond -f -l 8
-    restart: always
-    mem_limit: 32m
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "2"
-    volumes:
-      - ./cron/crontabs:/etc/crontabs
-    depends_on:
-      app:
-        condition: service_started
+  # RSSクロール(GET /v1/stock)はVMのsystemdタイマー(stock.timer, 2分ごと)が実行している。
+  # 定義: /etc/systemd/system/stock.{timer,service}(リポジトリ管理外)
   nginx:
     image: gcr.io/gke-test-287910/news-nginx:v0.0.1
     ports:
