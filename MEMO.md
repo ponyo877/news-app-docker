@@ -57,5 +57,5 @@ CYBERTRON_MODEL=izumi-lab/bert-small-japanese CYBERTRON_MODELS_DIR=models go run
 ```bash
 dstat -clm
 sh bin/gatling.sh --run-mode local --simulation testScenario
-ssh -i ~/.ssh/id_ed25519 keisuke877jp@35.197.79.235
+ssh -i ~/.ssh/id_ed25519 keisuke877jp@34.173.153.189
 ```
