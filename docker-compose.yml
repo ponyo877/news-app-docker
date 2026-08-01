@@ -2,7 +2,8 @@ version: "3.7"
 
 services:
   app:
-    image: gcr.io/gke-test-287910/news-app:v0.0.20
+    # v0.0.21: /health追加・クローラ堅牢化・画像ドメイン修正(developからビルド)
+    image: gcr.io/gke-test-287910/news-app:v0.0.21
     ports:
       - 8000:8000
     restart: always
@@ -13,8 +14,15 @@ services:
       options:
         max-size: "50m"
         max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8000/health"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     environment:
-      AP_ROOT: https://matome-kun.ga
+      # POST /v1/staticが返す公開URLの起点。matome-kun.gaは失効済みのため変更禁止
+      AP_ROOT: https://matome.folks-chat.com
       AP_PORT: 8000
       DB_USER: root
       DB_PASSWORD: password
@@ -103,6 +111,24 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
+  # RSSクロール(GET /v1/stock)の定期実行。従来はVMのcrontab(リポジトリ管理外)だったが、
+  # コンテナに移してリポジトリ管理+docker logsで実行履歴を追えるようにした。
+  # ⚠️ 有効化する際はVM側の旧crontabエントリを削除すること(二重実行防止)
+  cron:
+    image: alpine:latest
+    command: crond -f -l 8
+    restart: always
+    mem_limit: 32m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    volumes:
+      - ./cron/crontabs:/etc/crontabs
+    depends_on:
+      app:
+        condition: service_started
   nginx:
     image: gcr.io/gke-test-287910/news-nginx:v0.0.1
     ports:

@@ -1,0 +1,2 @@
+# RSSクロール: 10分ごとに全サイトの新着記事を取り込む(失敗サイトはアプリ側でスキップ)
+*/10 * * * * wget -q -O /dev/null -T 300 http://app:8000/v1/stock && echo "stock ok $(date)" || echo "stock FAILED $(date)"
