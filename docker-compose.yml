@@ -2,8 +2,8 @@ version: "3.7"
 
 services:
   app:
-    # v0.0.21: /health追加・クローラ堅牢化・画像ドメイン修正(developからビルド)
-    image: gcr.io/gke-test-287910/news-app:v0.0.21
+    # v0.0.22: /v1/static配信修正(Download実装)。v0.0.21: /health・クローラ堅牢化・画像ドメイン修正
+    image: gcr.io/gke-test-287910/news-app:v0.0.22
     ports:
       # 外部公開はnginx(:80)のみ。直結ポートはホスト内に限定する
       - 127.0.0.1:8000:8000
