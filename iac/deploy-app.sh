@@ -8,7 +8,9 @@ set -euo pipefail
 
 HOST="${1:?使い方: ./deploy-app.sh <VMのIP> [ブランチ]}"
 BRANCH="${2:-develop}"
-OUT_DIR="$(mktemp -d)"
+# macOSのmktemp既定(/var/folders/...)はcolima VMに共有されずbind mountが空になるため、
+# 共有対象の$HOME配下に作業ディレクトリを置く
+OUT_DIR="$(mktemp -d "$HOME/.cache/news-app-deploy.XXXXXX")"
 trap 'rm -rf "$OUT_DIR"' EXIT
 
 echo "=== 1. linux/amd64 バイナリをビルド(golang:1.26 / glibc)==="
