@@ -1,4 +1,4 @@
-FROM golang:1.18.1-alpine AS build
+FROM golang:1.26-alpine AS build
 WORKDIR /src
 RUN apk update && apk add git gcc g++
 RUN git clone --depth 1 -b develop https://github.com/ponyo877/news-app-backend-refactor.git /src

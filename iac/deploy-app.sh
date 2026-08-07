@@ -11,11 +11,11 @@ BRANCH="${2:-develop}"
 OUT_DIR="$(mktemp -d)"
 trap 'rm -rf "$OUT_DIR"' EXIT
 
-echo "=== 1. linux/amd64 バイナリをビルド(golang:1.18 / glibc)==="
+echo "=== 1. linux/amd64 バイナリをビルド(golang:1.26 / glibc)==="
 docker run --rm --platform linux/amd64 \
   -v "$OUT_DIR":/out \
   -v news-app-go-mod-cache:/go/pkg/mod \
-  golang:1.18 bash -c "
+  golang:1.26 bash -c "
     set -e
     git clone --depth 1 -b '$BRANCH' https://github.com/ponyo877/news-app-backend-refactor.git /src
     cd /src
