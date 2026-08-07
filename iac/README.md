@@ -33,8 +33,8 @@
 ```bash
 # === 新VM上 ===
 # 1. リポジトリ取得とセットアップ(mysql/redis/nginx/ユニット一式が入る)
-git clone https://github.com/ponyo877/news-app-docker.git ~/news-app-docker
-cd ~/news-app-docker/iac
+git clone https://github.com/ponyo877/news-app-infra.git ~/news-app-infra
+cd ~/news-app-infra/iac
 sudo ./setup.sh                      # 冪等。環境ファイルの雛形が /etc/news-app/env に置かれる
 sudo vi /etc/news-app/env            # パスワード・CRON_TOKEN を実値に
 
@@ -66,7 +66,7 @@ curl -s "http://<新VMのIP>/v1/article" | head -c 300
 ## 日常のデプロイ(移行後)
 
 ```bash
-cd ~/Documents/workspace/news-app-docker/iac
+cd ~/Documents/workspace/news-app-infra/iac
 ./deploy-app.sh <VMのIP>     # ビルド→scp→systemctl restart news-app まで一発
 ```
 
