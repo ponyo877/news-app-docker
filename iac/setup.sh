@@ -9,10 +9,22 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+echo "=== 0. スワップ(1GB RAM環境の必須保険。未設定だとインポート等でOOMハングする) ==="
+if ! swapon --show | grep -q /swapfile; then
+  fallocate -l 4G /swapfile && chmod 600 /swapfile && mkswap /swapfile > /dev/null && swapon /swapfile
+  grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
 echo "=== 1. パッケージ ==="
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-apt-get install -yq mysql-server redis-server nginx curl python3
+apt-get install -yq mysql-server redis-server nginx curl python3 iptables-persistent
+
+echo "=== 1b. ファイアウォール(OCIのUbuntuイメージは:22以外REJECTのため:80を開ける) ==="
+if ! iptables -C INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT 2>/dev/null; then
+  iptables -I INPUT 5 -p tcp --dport 80 -m state --state NEW -j ACCEPT
+  netfilter-persistent save > /dev/null 2>&1 || true
+fi
 
 echo "=== 2. ディレクトリとユーザー ==="
 useradd --system --home /opt/news-app --shell /usr/sbin/nologin newsapp 2>/dev/null || true
