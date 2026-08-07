@@ -1,0 +1,9 @@
+# ローカルでクロスコンパイル済みのGoバイナリを組み立てるだけの軽量Dockerfile。
+# 重いgo buildを本番VM上で走らせないための運用(docs: iac/README.md)
+#   ローカル: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o news-app ./api
+#   VM:      sudo docker build -f Dockerfile.binary -t gcr.io/gke-test-287910/news-app:vX.Y.Z .
+FROM alpine:latest
+WORKDIR /
+COPY news-app /news-app
+EXPOSE 80
+ENTRYPOINT ["/news-app"]
