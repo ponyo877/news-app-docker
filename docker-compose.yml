@@ -2,8 +2,9 @@ version: "3.7"
 
 services:
   app:
+    # v0.0.23: 検索LIMIT・終端500修正・Cache-Control・/v1/user閉鎖・CronGuard・WebDAV PUT検証(d517eff)
     # v0.0.22: /v1/static配信修正(Download実装)。v0.0.21: /health・クローラ堅牢化・画像ドメイン修正
-    image: gcr.io/gke-test-287910/news-app:v0.0.22
+    image: gcr.io/gke-test-287910/news-app:v0.0.23
     ports:
       # 外部公開はnginx(:80)のみ。直結ポートはホスト内に限定する
       - 127.0.0.1:8000:8000
@@ -39,6 +40,9 @@ services:
       MLM_DIR: /srv/models
       MLM_NAME: izumi-lab/bert-small-japanese
       MLM_INDEX_PATH: /srv/matome.ann
+      # /v1/stock 系の保護トークン。値はVMの .env(git管理外)に置く。
+      # systemdタイマー(stock.service)のcurlにも同じ値のヘッダーが必要
+      CRON_TOKEN: ${CRON_TOKEN:-}
     depends_on:
       mysql:
         condition: service_healthy
