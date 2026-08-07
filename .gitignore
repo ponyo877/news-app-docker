@@ -3,3 +3,7 @@ mysql/data*
 redis/data/
 elasticsearch/data/
 webdav/data/.env
+
+# 旧compose実験のランタイムデータ(コミットしない)
+/elasticsearch/
+/webdav/data/
