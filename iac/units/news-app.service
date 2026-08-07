@@ -1,0 +1,20 @@
+[Unit]
+Description=まとめくん API (news-app)
+After=network-online.target mysql.service redis-server.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=newsapp
+EnvironmentFile=/etc/news-app/env
+ExecStart=/opt/news-app/news-app
+WorkingDirectory=/opt/news-app
+Restart=always
+RestartSec=3
+# 旧docker構成の mem_limit: 512m 相当(BERTモデル常駐分を含む)
+MemoryMax=640M
+# 万一のOOM時はこのサービスだけ再起動される
+OOMPolicy=stop
+
+[Install]
+WantedBy=multi-user.target

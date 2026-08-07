@@ -1,0 +1,9 @@
+[Unit]
+Description=クロール停止検知の日次タイマー(9:00 JST = 0:00 UTC)
+
+[Timer]
+OnCalendar=*-*-* 00:00:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,7 @@
+[Unit]
+Description=ニュースサイトの記事を更新する(RSSクロール)
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/news-app/env
+ExecStart=/usr/bin/curl -fsS -m 110 -H "X-Cron-Token: ${CRON_TOKEN}" http://127.0.0.1:8000/v1/stock

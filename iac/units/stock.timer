@@ -1,0 +1,9 @@
+[Unit]
+Description=記事更新のタイマー(2分ごと)
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=2m
+
+[Install]
+WantedBy=timers.target

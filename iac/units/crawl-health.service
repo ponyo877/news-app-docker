@@ -1,0 +1,10 @@
+[Unit]
+Description=クロール停止検知(48時間更新なしサイトの通知)
+
+[Service]
+Type=oneshot
+# Webhook通知する場合は /etc/news-app/env に WEBHOOK_URL を追記する
+EnvironmentFile=/etc/news-app/env
+ExecStart=/opt/news-app/check-crawl-health.sh
+# 停止サイトあり(exit 1)でもユニットをfailedにしない(通知が仕事のため)
+SuccessExitStatus=0 1
