@@ -1,28 +1,21 @@
 #!/usr/bin/env bash
-# Goバイナリをローカルでビルドして bare VM に配備する。
+# Goバイナリをローカルでクロスコンパイルして bare VM に配備する。
 # 使い方: ./deploy-app.sh <VMのIP or ホスト名> [ブランチ(既定: develop)]
 #
-# cgo(annoyindexのC++バインディング)があるため、linux/amd64 + glibc の
-# コンテナ内でビルドする(alpine/muslはUbuntu実行不可なので使わない)。
+# annoyindex(cgo)はビルドタグ mlindex に隔離済みのため、通常ビルドは
+# CGO_ENABLED=0 で成立し、MacからDocker/colima不要で数秒でクロスコンパイルできる。
+# (類似記事インデックスが必要になったら -tags mlindex + Linux環境でビルドすること)
 set -euo pipefail
 
 HOST="${1:?使い方: ./deploy-app.sh <VMのIP> [ブランチ]}"
 BRANCH="${2:-develop}"
-# macOSのmktemp既定(/var/folders/...)はcolima VMに共有されずbind mountが空になるため、
-# 共有対象の$HOME配下に作業ディレクトリを置く
 OUT_DIR="$(mktemp -d "$HOME/.cache/news-app-deploy.XXXXXX")"
 trap 'rm -rf "$OUT_DIR"' EXIT
 
-echo "=== 1. linux/amd64 バイナリをビルド(golang:1.26 / glibc)==="
-docker run --rm --platform linux/amd64 \
-  -v "$OUT_DIR":/out \
-  -v news-app-go-mod-cache:/go/pkg/mod \
-  golang:1.26 bash -c "
-    set -e
-    git clone --depth 1 -b '$BRANCH' https://github.com/ponyo877/news-app-backend-refactor.git /src
-    cd /src
-    go build -o /out/news-app api/main.go
-  "
+echo "=== 1. linux/amd64 バイナリをクロスコンパイル(cgoなし・Docker不要)==="
+SRC_DIR="$OUT_DIR/src"
+git clone --depth 1 -b "$BRANCH" https://github.com/ponyo877/news-app-backend-refactor.git "$SRC_DIR"
+(cd "$SRC_DIR" && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o "$OUT_DIR/news-app" ./api)
 ls -lh "$OUT_DIR/news-app"
 
 echo "=== 2. 転送と再起動 ==="
