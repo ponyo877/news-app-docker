@@ -1,0 +1,30 @@
+# bare構成用 MySQL 8.0 設定(旧 mysql/my.cnf のMySQL 8.0移植版)
+# 注意: 旧5.7の query_cache_* / innodb_support_xa / innodb_checksums は8.0で廃止のため載せない
+[mysqld]
+character-set-server=utf8mb4
+collation-server=utf8mb4_general_ci
+
+# 日本語全文検索(2文字ngram)。検索APIの前提
+innodb_ft_min_token_size=2
+ngram_token_size=2
+ft_min_word_len=2
+
+# 1GB VM向けメモリ最適化
+innodb_buffer_pool_size=256M
+max_connections=50
+table_open_cache=200
+table_definition_cache=200
+performance_schema=OFF
+innodb_log_buffer_size=8M
+innodb_redo_log_capacity=64M
+
+innodb_file_per_table=1
+innodb_flush_method=O_DIRECT
+innodb_doublewrite=0
+innodb_lru_scan_depth=256
+
+# X Protocol(33060)は未使用のため無効化
+mysqlx=0
+
+[client]
+default-character-set=utf8mb4
