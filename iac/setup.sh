@@ -73,10 +73,12 @@ install -m 644 units/stock.service /etc/systemd/system/
 install -m 644 units/stock.timer /etc/systemd/system/
 install -m 644 units/crawl-health.service /etc/systemd/system/
 install -m 644 units/crawl-health.timer /etc/systemd/system/
+install -m 644 units/digest.service /etc/systemd/system/
+install -m 644 units/digest.timer /etc/systemd/system/
 install -m 755 ../../news-app-backend-refactor/scripts/check-crawl-health.sh /opt/news-app/check-crawl-health.sh 2>/dev/null || \
   echo "check-crawl-health.sh は backend リポジトリから /opt/news-app/ へ手動配置してください"
 systemctl daemon-reload
-systemctl enable stock.timer crawl-health.timer
+systemctl enable stock.timer crawl-health.timer digest.timer
 # news-app.service はバイナリ配備後に deploy-app.sh が起動する
 
 echo "=== 完了 ==="
