@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.matomebeta_app",
+      "sha256_cert_fingerprints": [
+        "7E:46:48:10:7B:94:85:F1:AD:64:FE:DF:B1:A6:64:2D:48:7A:EC:E8:B3:FD:94:E9:D3:91:FC:F5:E7:DE:5D:FD",
+        "79:50:52:C1:C1:FA:B1:27:C8:B6:95:BD:47:69:89:60:26:C0:CB:DC:A2:99:57:EE:54:D6:7C:0C:91:81:13:6E"
+      ]
+    }
+  }
+]

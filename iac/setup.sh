@@ -65,6 +65,14 @@ rm -f /etc/nginx/sites-enabled/default
 mkdir -p /var/www/static/privacy_policy /var/www/static/eula
 cp ../nginx/privacy_policy.html /var/www/static/privacy_policy/index.html 2>/dev/null || true
 cp ../nginx/eula.html /var/www/static/eula/index.html 2>/dev/null || true
+# Universal Links / App Links 検証ファイル(nginxがdefault_type application/jsonで配信)
+mkdir -p /var/www/.well-known
+install -m 644 nginx/well-known/apple-app-site-association /var/www/.well-known/apple-app-site-association
+if grep -q PLACEHOLDER nginx/well-known/assetlinks.json; then
+  echo "!!! assetlinks.json のSHA-256がプレースホルダのままです。Play Consoleから取得して埋めること。配備スキップ !!!"
+else
+  install -m 644 nginx/well-known/assetlinks.json /var/www/.well-known/assetlinks.json
+fi
 nginx -t && systemctl enable --now nginx && systemctl reload nginx
 
 echo "=== 7. systemd ユニット ==="
@@ -75,10 +83,12 @@ install -m 644 units/crawl-health.service /etc/systemd/system/
 install -m 644 units/crawl-health.timer /etc/systemd/system/
 install -m 644 units/digest.service /etc/systemd/system/
 install -m 644 units/digest.timer /etc/systemd/system/
+install -m 644 units/recs-ingest.service /etc/systemd/system/
+install -m 644 units/recs-ingest.timer /etc/systemd/system/
 install -m 755 ../../news-app-backend-refactor/scripts/check-crawl-health.sh /opt/news-app/check-crawl-health.sh 2>/dev/null || \
   echo "check-crawl-health.sh は backend リポジトリから /opt/news-app/ へ手動配置してください"
 systemctl daemon-reload
-systemctl enable stock.timer crawl-health.timer digest.timer
+systemctl enable stock.timer crawl-health.timer digest.timer recs-ingest.timer
 # news-app.service はバイナリ配備後に deploy-app.sh が起動する
 
 echo "=== 完了 ==="

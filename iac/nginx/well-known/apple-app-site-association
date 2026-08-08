@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["579Y3Y3699.com.matomebeta-app"],
+        "components": [
+          { "/": "/a/*", "comment": "共有着地ページのみアプリで開く" }
+        ]
+      }
+    ]
+  }
+}
