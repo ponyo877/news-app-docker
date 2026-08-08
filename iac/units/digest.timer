@@ -1,0 +1,9 @@
+[Unit]
+Description=ダイジェスト通知のタイマー(朝7時・夜19時 JST)
+
+[Timer]
+OnCalendar=*-*-* 07,19:00:00 Asia/Tokyo
+Persistent=false
+
+[Install]
+WantedBy=timers.target
