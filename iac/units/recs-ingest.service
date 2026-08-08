@@ -1,0 +1,7 @@
+[Unit]
+Description=推薦基盤(Cloudflare Worker)へ新着記事の取り込みをトリガーする
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/news-app/env
+ExecStart=/usr/bin/curl -fsS -m 110 -X POST -H "X-Cron-Token: ${CRON_TOKEN}" https://matome-recs.ponyo877.workers.dev/internal/ingest

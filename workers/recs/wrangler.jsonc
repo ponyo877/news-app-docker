@@ -1,0 +1,28 @@
+// まとめくん推薦基盤(Workers AI + Vectorize)
+// デプロイ手順は README.md 参照。KV namespace の id は `wrangler kv namespace create RECS_KV` の出力で置換する
+{
+  "name": "matome-recs",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  "ai": {
+    "binding": "AI"
+  },
+  "vectorize": [
+    {
+      "binding": "VECTORIZE",
+      "index_name": "matome-articles"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "75930759b6ad451696517cc1a3d34e22"
+    }
+  ],
+  // cronは使わない: アカウントのFree枠(5個)が既存Workerで埋まっているため、
+  // 取り込みはOCI VMのsystemd timer(recs-ingest.timer)が POST /internal/ingest を叩く。
+  // 認可シークレットは `wrangler secret put INGEST_TOKEN`(VMのCRON_TOKENと同値)
+  "observability": {
+    "enabled": true
+  }
+}
